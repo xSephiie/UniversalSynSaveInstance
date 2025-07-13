@@ -1707,6 +1707,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		timeout = 10,
 		-- * New:
 		__DEBUG_MODE = false,
+                GetAllScripts = false
 
 		-- Binary = false, -- true in syn newer versions (false in our case because no binary support yet), Description: Saves everything in Binary Mode (rbxl/rbxm).
 		Callback = false,
