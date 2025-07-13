@@ -2545,7 +2545,15 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		Item ..= "</Properties>"
 		return Item
 	end
-
+if OPTIONS.GetAllScripts then
+    local scriptList = {}
+    for _, scriptInstance in ipairs(game:GetDescendants()) do
+        if scriptInstance:IsA("Script") or scriptInstance:IsA("LocalScript") then
+            table.insert(scriptList, scriptInstance)
+        end
+    end
+    ToSaveList = scriptList
+end
 	local function save_hierarchy(hierarchy)
 		for _, instance in hierarchy do
 			if IgnoreNotArchivable and not instance.Archivable then
