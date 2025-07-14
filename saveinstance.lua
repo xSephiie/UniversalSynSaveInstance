@@ -2652,42 +2652,36 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		end
 
 		if NilInstances and global_container.getnilinstances then
-			local nil_instances, nil_instances_size = {}, 1
+    local nil_instances, nil_instances_size = {}, 1
+    local NilInstancesFixes = OPTIONS.NilInstancesFixes
 
-			local NilInstancesFixes = OPTIONS.NilInstancesFixes
-
-			for _, instance in next, global_container.getnilinstances() do
-				if instance == game then
-					instance = nil
-					-- break
-				else
-					local ClassName = instance.ClassName
-
-					local Fix = InheritsFix(NilInstancesFixes, ClassName, instance)
-
-					if Fix then
-						instance = Fix(instance, InstancesOverrides)
-						-- continue
-					end
-
-					local Class = ClassList[ClassName]
-					if Class then
-						local ClassTags = Class.Tags
-						if ClassTags and ClassTags.Service then -- For CSGDictionaryService, NonReplicatedCSGDictionaryService, LogService, ProximityPromptService, TestService & more
-							-- instance.Parent = game
-							instance = nil
-							-- continue
-						end
-					end
-				end
-				if instance then
-					nil_instances[nil_instances_size] = instance
-					nil_instances_size = nil_instances_size + 1
-				end
-			end
-			SaveNonCreatable = true
-			save_extra("Nil Instances", nil_instances)
-		end
+    for _, instance in next, global_container.getnilinstances() do
+        if instance == game then
+            instance = nil
+        else
+            local ClassName = instance.ClassName
+            local Fix = InheritsFix(NilInstancesFixes, ClassName, instance)
+            if Fix then
+                instance = Fix(instance, InstancesOverrides)
+            elseif ClassName == "Folder" then
+                -- Allow folders to be saved as-is without a fix
+            end
+            local Class = ClassList[ClassName]
+            if Class then
+                local ClassTags = Class.Tags
+                if ClassTags and ClassTags.Service then
+                    instance = nil
+                end
+            end
+        end
+        if instance then
+            nil_instances[nil_instances_size] = instance
+            nil_instances_size = nil_instances_size + 1
+        end
+    end
+    SaveNonCreatable = true
+    save_extra("Nil Instances", nil_instances)
+end
 
 		if OPTIONS.ReadMe then
 			save_extra(
